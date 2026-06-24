@@ -162,6 +162,24 @@ h3{font-size:clamp(17px,1.6vw,22px);font-weight:600;line-height:1.2}
 .ba-footer p{font-family:var(--fb);font-size:11px;color:var(--w30);text-align:center}
 .results-cta{text-align:center}
 
+/* RESULT CAROUSELS */
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:40px}
+@media(max-width:640px){.results-grid{grid-template-columns:1fr}}
+.result-card{background:var(--g2);border:1px solid var(--w12);border-radius:6px;overflow:hidden}
+.result-carousel{position:relative}
+.result-track-wrap{overflow:hidden}
+.result-track{display:flex;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.result-slide{flex:0 0 100%}
+.result-slide img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.result-btn{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;background:rgba(5,5,5,.7);border:1.5px solid var(--w12);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--w60);transition:border-color .25s,color .25s,background .25s;z-index:2;padding:0}
+.result-btn:hover{border-color:var(--yellow);color:var(--yellow);background:rgba(5,5,5,.92)}
+.result-btn.prev{left:10px}
+.result-btn.next{right:10px}
+.result-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.result-dots{display:flex;gap:5px;justify-content:center;padding:10px 0 6px}
+.result-dot{width:5px;height:5px;border-radius:50%;background:var(--w30);cursor:pointer;transition:background .25s,transform .25s}
+.result-dot.active{background:var(--yellow);transform:scale(1.5)}
+
 /* PARA QUEM */
 .paraquem{background:var(--g1)}
 .paraquem-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
@@ -267,6 +285,8 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
 .footer-copy{font-family:var(--fb);font-size:11px;color:rgba(255,255,255,.22);letter-spacing:.04em}
 .footer-dev{font-family:var(--fb);font-size:11px;color:rgba(255,255,255,.22);letter-spacing:.04em;transition:color .25s;display:inline-flex;align-items:center;gap:5px}
 .footer-dev:hover{color:var(--yellow)}
+/* ABOUT CREF */
+.about-cref-reg{font-family:var(--fh);font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--w30);margin-bottom:4px;margin-top:-2px}
 /* hero CSS fallback — visible by default, GSAP overrides if it runs */
 #h-logo,#h-ey,#h-h1,#h-sub,#h-list,#h-cta{opacity:1;transform:none}
 </style>
@@ -277,10 +297,11 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
 <nav id="main-nav">
   <div class="nav-inner">
     <div class="nav-links">
-      <a href="#metodo">Método</a>
-      <a href="#resultados">Resultados</a>
-      <a href="#sobre">Sobre</a>
+      <a href="#hero">Início</a>
+      <a href="#metodo">A Consultoria</a>
       <a href="#planos">Planos</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#contato">Contato</a>
     </div>
   </div>
 </nav>
@@ -480,10 +501,83 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <h2>Veja o <span class="accent">Antes e Depois</span></h2>
       <p>Transformações acontecem quando existe estratégia, acompanhamento e consistência. Os resultados refletem o comprometimento dos alunos aliado a um planejamento individualizado e monitoramento constante.</p>
     </div>
-    <div class="ba-grid">
-      <div class="ba-card"><div class="ba-imgs"><div class="ba-img"><span>Antes</span></div><div class="ba-img"><span>Depois</span></div></div><div class="ba-footer"><p>Inserir transformação</p></div></div>
-      <div class="ba-card"><div class="ba-imgs"><div class="ba-img"><span>Antes</span></div><div class="ba-img"><span>Depois</span></div></div><div class="ba-footer"><p>Inserir transformação</p></div></div>
-      <div class="ba-card"><div class="ba-imgs"><div class="ba-img"><span>Antes</span></div><div class="ba-img"><span>Depois</span></div></div><div class="ba-footer"><p>Inserir transformação</p></div></div>
+    <div class="results-grid">
+      <!-- Pessoa A -->
+      <div class="result-card">
+        <div class="result-carousel">
+          <div class="result-track-wrap">
+            <div class="result-track">
+              <div class="result-slide"><img src="resultados/pessoa-a/1.png" alt="Resultado aluno A"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-a/2.png" alt="Resultado aluno A"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-a/3.png" alt="Resultado aluno A"/></div>
+            </div>
+          </div>
+          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="result-dots">
+            <span class="result-dot active" data-i="0"></span>
+            <span class="result-dot" data-i="1"></span>
+            <span class="result-dot" data-i="2"></span>
+          </div>
+        </div>
+      </div>
+      <!-- Pessoa B -->
+      <div class="result-card">
+        <div class="result-carousel">
+          <div class="result-track-wrap">
+            <div class="result-track">
+              <div class="result-slide"><img src="resultados/pessoa-b/4.png" alt="Resultado aluno B"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-b/5.png" alt="Resultado aluno B"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-b/6.png" alt="Resultado aluno B"/></div>
+            </div>
+          </div>
+          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="result-dots">
+            <span class="result-dot active" data-i="0"></span>
+            <span class="result-dot" data-i="1"></span>
+            <span class="result-dot" data-i="2"></span>
+          </div>
+        </div>
+      </div>
+      <!-- Pessoa C -->
+      <div class="result-card">
+        <div class="result-carousel">
+          <div class="result-track-wrap">
+            <div class="result-track">
+              <div class="result-slide"><img src="resultados/pessoa-c/7.png" alt="Resultado aluno C"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-c/8.png" alt="Resultado aluno C"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-c/9.png" alt="Resultado aluno C"/></div>
+            </div>
+          </div>
+          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="result-dots">
+            <span class="result-dot active" data-i="0"></span>
+            <span class="result-dot" data-i="1"></span>
+            <span class="result-dot" data-i="2"></span>
+          </div>
+        </div>
+      </div>
+      <!-- Pessoa D -->
+      <div class="result-card">
+        <div class="result-carousel">
+          <div class="result-track-wrap">
+            <div class="result-track">
+              <div class="result-slide"><img src="resultados/pessoa-d/10.png" alt="Resultado aluno D"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-d/11.png" alt="Resultado aluno D"/></div>
+              <div class="result-slide"><img src="resultados/pessoa-d/12.png" alt="Resultado aluno D"/></div>
+            </div>
+          </div>
+          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="result-dots">
+            <span class="result-dot active" data-i="0"></span>
+            <span class="result-dot" data-i="1"></span>
+            <span class="result-dot" data-i="2"></span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="results-cta">
       <a href="https://wa.me/554799962543?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20sua%20consultoria" target="_blank" rel="noopener" class="btn btn-yellow btn-lg">Quero Começar Agora</a>
@@ -518,6 +612,9 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
         <li><span class="pq-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Evoluir de forma consistente</li>
         <li><span class="pq-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>Construir hábitos duradouros</li>
       </ul>
+      <div style="margin-top:32px;text-align:center">
+        <a href="https://wa.me/554799962543?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20sua%20consultoria" target="_blank" rel="noopener" class="btn btn-yellow btn-lg">Quero Começar Agora</a>
+      </div>
     </div>
   </div>
 </section>
@@ -538,6 +635,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
         </p>
         <p class="about-name">Conheça</p>
         <h2 class="about-title">Jessica Buzzi</h2>
+        <p class="about-cref-reg">CREF 021289-G/SC</p>
         <p class="about-cred">Especialista em Treinamento Personalizado e Nutrição Esportiva</p>
         <div class="about-bio">
           <p>Meu nome é Jessica Buzzi e a minha paixão pela musculação iniciou quando eu percebi o poder que ela exerce em mim. Treinar faz parte da minha filosofia de vida, minha mente não compreende mais uma vida sem o exercício físico.</p>
@@ -657,7 +755,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
 </section>
 
 <!-- FOOTER -->
-<footer>
+<footer id="contato">
   <div class="wrap">
     <div class="footer-top">
       <img src="logo-jessica-buzzi.png" alt="Jessica Buzzi" class="footer-logo-img"/>
@@ -741,6 +839,22 @@ gsap.fromTo('.plan-card',{opacity:0,y:36,scale:.97},{opacity:1,y:0,scale:1,durat
   scrollTrigger:{trigger:'.plans-grid',start:'top 80%'}});
 
 revealBatch('.finalcta-inner > *');
+
+/* result carousels */
+document.querySelectorAll('.result-carousel').forEach(function(carousel){
+  var track = carousel.querySelector('.result-track');
+  var dots  = carousel.querySelectorAll('.result-dot');
+  var total = carousel.querySelectorAll('.result-slide').length;
+  var cur = 0;
+  function go(n){
+    cur = (n + total) % total;
+    track.style.transform = 'translateX(-' + (cur * 100) + '%)';
+    dots.forEach(function(d,i){ d.classList.toggle('active', i === cur); });
+  }
+  carousel.querySelector('.prev').addEventListener('click', function(){ go(cur - 1); });
+  carousel.querySelector('.next').addEventListener('click', function(){ go(cur + 1); });
+  dots.forEach(function(d){ d.addEventListener('click', function(){ go(+d.dataset.i); }); });
+});
 
 /* carousel */
 (function(){
