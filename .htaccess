@@ -1,5 +1,10 @@
 Options -Indexes
 
+<FilesMatch "^admin-hash\.txt$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
 RewriteEngine On
 
 # Clean URLs: /admin → admin.html, /avaliacao → avaliacao.html
