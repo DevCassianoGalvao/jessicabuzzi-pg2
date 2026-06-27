@@ -150,35 +150,22 @@ h3{font-size:clamp(17px,1.6vw,22px);font-weight:600;line-height:1.2}
 .results-hdr{text-align:center;margin-bottom:48px}
 .results-hdr .label{justify-content:center}
 .results-hdr p{font-family:var(--fb);font-size:16px;color:var(--w60);margin-top:14px;font-weight:300;max-width:600px;margin-inline:auto}
-.ba-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:40px}
+.ba-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:40px}
 @media(max-width:900px){.ba-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:540px){.ba-grid{grid-template-columns:1fr}}
 .ba-card{background:var(--g2);border:1px solid var(--w12);border-radius:6px;overflow:hidden}
-.ba-imgs{display:grid;grid-template-columns:1fr 1fr}
-.ba-img{aspect-ratio:3/4;background:var(--g3);display:flex;align-items:center;justify-content:center}
-.ba-img+.ba-img{border-left:2px solid var(--yellow)}
-.ba-img span{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--w30)}
-.ba-footer{padding:11px 14px;border-top:1px solid var(--w06)}
-.ba-footer p{font-family:var(--fb);font-size:11px;color:var(--w30);text-align:center}
+.ba-imgs{display:grid;grid-template-columns:1fr 1fr 1fr}
+.ba-img{aspect-ratio:2/3;background:var(--g3);overflow:hidden;cursor:pointer;position:relative}
+.ba-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.ba-img:hover img{transform:scale(1.06)}
+.ba-img+.ba-img{border-left:1px solid var(--w06)}
 .results-cta{text-align:center}
-
-/* RESULT CAROUSELS */
-.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:40px}
-@media(max-width:640px){.results-grid{grid-template-columns:1fr}}
-.result-card{background:var(--g2);border:1px solid var(--w12);border-radius:6px;overflow:hidden}
-.result-carousel{position:relative}
-.result-track-wrap{overflow:hidden}
-.result-track{display:flex;transition:transform .5s cubic-bezier(.16,1,.3,1)}
-.result-slide{flex:0 0 100%}
-.result-slide img{width:100%;aspect-ratio:3/4;max-height:420px;object-fit:cover;display:block}
-.result-btn{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;background:rgba(5,5,5,.7);border:1.5px solid var(--w12);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--w60);transition:border-color .25s,color .25s,background .25s;z-index:2;padding:0}
-.result-btn:hover{border-color:var(--yellow);color:var(--yellow);background:rgba(5,5,5,.92)}
-.result-btn.prev{left:10px}
-.result-btn.next{right:10px}
-.result-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.result-dots{display:flex;gap:5px;justify-content:center;padding:10px 0 6px}
-.result-dot{width:5px;height:5px;border-radius:50%;background:var(--w30);cursor:pointer;transition:background .25s,transform .25s}
-.result-dot.active{background:var(--yellow);transform:scale(1.5)}
+/* LIGHTBOX */
+.lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.lb-overlay.active{opacity:1;pointer-events:all}
+.lb-img{max-width:min(88vw,480px);max-height:90vh;object-fit:contain;border-radius:6px;box-shadow:0 0 80px rgba(0,0,0,.8)}
+.lb-close{position:absolute;top:20px;right:24px;width:42px;height:42px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:22px;line-height:1;transition:background .25s,border-color .25s;font-family:system-ui,sans-serif}
+.lb-close:hover{background:var(--yellow);color:#000;border-color:var(--yellow)}
 
 /* PARA QUEM */
 .paraquem{background:var(--g1)}
@@ -285,8 +272,6 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
 .footer-copy{font-family:var(--fb);font-size:11px;color:rgba(255,255,255,.22);letter-spacing:.04em}
 .footer-dev{font-family:var(--fb);font-size:11px;color:rgba(255,255,255,.22);letter-spacing:.04em;transition:color .25s;display:inline-flex;align-items:center;gap:5px}
 .footer-dev:hover{color:var(--yellow)}
-/* ABOUT CREF */
-.about-cref-reg{font-family:var(--fh);font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--w30);margin-bottom:4px;margin-top:-2px}
 /* hero CSS fallback — visible by default, GSAP overrides if it runs */
 #h-logo,#h-ey,#h-h1,#h-sub,#h-list,#h-cta{opacity:1;transform:none}
 </style>
@@ -297,11 +282,10 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
 <nav id="main-nav">
   <div class="nav-inner">
     <div class="nav-links">
-      <a href="#hero">Início</a>
-      <a href="#metodo">A Consultoria</a>
-      <a href="#planos">Planos</a>
+      <a href="#metodo">Método</a>
       <a href="#resultados">Resultados</a>
-      <a href="#contato">Contato</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#planos">Planos</a>
     </div>
   </div>
 </nav>
@@ -382,6 +366,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <!-- Etapa 1 -->
       <div class="etapa">
         <div class="etapa-icon">
+          <!-- Anamnese / clipboard icon -->
           <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
         </div>
         <div class="etapa-content">
@@ -393,6 +378,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <!-- Etapa 2 -->
       <div class="etapa">
         <div class="etapa-icon">
+          <!-- Body / scan icon -->
           <svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 100 8 4 4 0 000-8zM6 21v-1a6 6 0 0112 0v1"/><path d="M3 10h2M19 10h2M12 2v2"/></svg>
         </div>
         <div class="etapa-content">
@@ -404,6 +390,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <!-- Etapa 3 -->
       <div class="etapa">
         <div class="etapa-icon">
+          <!-- Strategy / target icon -->
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         </div>
         <div class="etapa-content">
@@ -415,6 +402,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <!-- Etapa 4 -->
       <div class="etapa">
         <div class="etapa-icon">
+          <!-- Video call / consultation icon -->
           <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14"/><rect x="3" y="8" width="12" height="8" rx="2"/></svg>
         </div>
         <div class="etapa-content">
@@ -426,6 +414,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <!-- Etapa 5 -->
       <div class="etapa">
         <div class="etapa-icon">
+          <!-- Chart / progress icon -->
           <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
         </div>
         <div class="etapa-content">
@@ -467,9 +456,9 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
           <div class="carousel" id="carousel">
             <div class="carousel-track-wrap">
               <div class="carousel-track" id="c-track">
-                <div class="c-slide"><div class="vid-placeholder"><div class="vid-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div><p class="vid-num">Vídeo 01 / 03</p></div></div>
-                <div class="c-slide"><div class="vid-placeholder"><div class="vid-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div><p class="vid-num">Vídeo 02 / 03</p></div></div>
-                <div class="c-slide"><div class="vid-placeholder"><div class="vid-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div><p class="vid-num">Vídeo 03 / 03</p></div></div>
+                <div class="c-slide"><iframe class="c-yt" src="https://www.youtube.com/embed/47xSHwhHWIw?rel=0&playsinline=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;aspect-ratio:9/16;border-radius:8px;display:block;border:none"></iframe></div>
+                <div class="c-slide"><iframe class="c-yt" src="https://www.youtube.com/embed/OJz6W5vnDPQ?rel=0&playsinline=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;aspect-ratio:9/16;border-radius:8px;display:block;border:none"></iframe></div>
+                <div class="c-slide"><iframe class="c-yt" src="https://www.youtube.com/embed/qHVk571ahaA?rel=0&playsinline=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;aspect-ratio:9/16;border-radius:8px;display:block;border:none"></iframe></div>
               </div>
             </div>
             <div class="carousel-controls">
@@ -501,83 +490,27 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <h2>Veja o <span class="accent">Antes e Depois</span></h2>
       <p>Transformações acontecem quando existe estratégia, acompanhamento e consistência. Os resultados refletem o comprometimento dos alunos aliado a um planejamento individualizado e monitoramento constante.</p>
     </div>
-    <div class="results-grid">
-      <!-- Pessoa A -->
-      <div class="result-card">
-        <div class="result-carousel">
-          <div class="result-track-wrap">
-            <div class="result-track">
-              <div class="result-slide"><img src="resultados/pessoa-a/1.png" alt="Resultado aluno A"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-a/2.png" alt="Resultado aluno A"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-a/3.png" alt="Resultado aluno A"/></div>
-            </div>
-          </div>
-          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
-          <div class="result-dots">
-            <span class="result-dot active" data-i="0"></span>
-            <span class="result-dot" data-i="1"></span>
-            <span class="result-dot" data-i="2"></span>
-          </div>
-        </div>
-      </div>
-      <!-- Pessoa B -->
-      <div class="result-card">
-        <div class="result-carousel">
-          <div class="result-track-wrap">
-            <div class="result-track">
-              <div class="result-slide"><img src="resultados/pessoa-b/4.png" alt="Resultado aluno B"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-b/5.png" alt="Resultado aluno B"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-b/6.png" alt="Resultado aluno B"/></div>
-            </div>
-          </div>
-          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
-          <div class="result-dots">
-            <span class="result-dot active" data-i="0"></span>
-            <span class="result-dot" data-i="1"></span>
-            <span class="result-dot" data-i="2"></span>
-          </div>
-        </div>
-      </div>
-      <!-- Pessoa C -->
-      <div class="result-card">
-        <div class="result-carousel">
-          <div class="result-track-wrap">
-            <div class="result-track">
-              <div class="result-slide"><img src="resultados/pessoa-c/7.png" alt="Resultado aluno C"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-c/8.png" alt="Resultado aluno C"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-c/9.png" alt="Resultado aluno C"/></div>
-            </div>
-          </div>
-          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
-          <div class="result-dots">
-            <span class="result-dot active" data-i="0"></span>
-            <span class="result-dot" data-i="1"></span>
-            <span class="result-dot" data-i="2"></span>
-          </div>
-        </div>
-      </div>
-      <!-- Pessoa D -->
-      <div class="result-card">
-        <div class="result-carousel">
-          <div class="result-track-wrap">
-            <div class="result-track">
-              <div class="result-slide"><img src="resultados/pessoa-d/10.png" alt="Resultado aluno D"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-d/11.png" alt="Resultado aluno D"/></div>
-              <div class="result-slide"><img src="resultados/pessoa-d/12.png" alt="Resultado aluno D"/></div>
-            </div>
-          </div>
-          <button class="result-btn prev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <button class="result-btn next" aria-label="Próximo"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
-          <div class="result-dots">
-            <span class="result-dot active" data-i="0"></span>
-            <span class="result-dot" data-i="1"></span>
-            <span class="result-dot" data-i="2"></span>
-          </div>
-        </div>
-      </div>
+    <div class="ba-grid">
+      <div class="ba-card"><div class="ba-imgs">
+        <div class="ba-img"><img src="uploads/resultado-a-1.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-a-2.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-a-3.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
+      </div></div>
+      <div class="ba-card"><div class="ba-imgs">
+        <div class="ba-img"><img src="uploads/resultado-b-1.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-b-2.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-b-3.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
+      </div></div>
+      <div class="ba-card"><div class="ba-imgs">
+        <div class="ba-img"><img src="uploads/resultado-c-1.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-c-2.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-c-3.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
+      </div></div>
+      <div class="ba-card"><div class="ba-imgs">
+        <div class="ba-img"><img src="uploads/resultado-d-1.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-d-2.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
+        <div class="ba-img"><img src="uploads/resultado-d-3.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
+      </div></div>
     </div>
     <div class="results-cta">
       <a href="https://wa.me/554799962543?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20sua%20consultoria" target="_blank" rel="noopener" class="btn btn-yellow btn-lg">Quero Começar Agora</a>
@@ -612,9 +545,6 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
         <li><span class="pq-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Evoluir de forma consistente</li>
         <li><span class="pq-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>Construir hábitos duradouros</li>
       </ul>
-      <div style="margin-top:32px;text-align:center">
-        <a href="https://wa.me/554799962543?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20sua%20consultoria" target="_blank" rel="noopener" class="btn btn-yellow btn-lg">Quero Começar Agora</a>
-      </div>
     </div>
   </div>
 </section>
@@ -626,7 +556,7 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
   <div class="wrap">
     <div class="about-layout">
       <div class="about-photo">
-        <img src="about-jessica-nova.png" alt="Jessica Buzzi" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:6px"/>
+        <img src="about-jessica.png" alt="Jessica Buzzi" style="width:100%;height:100%;object-fit:cover;object-position:center 5%;border-radius:6px"/>
       </div>
       <div class="about-text">
         <p class="label">
@@ -635,7 +565,6 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
         </p>
         <p class="about-name">Conheça</p>
         <h2 class="about-title">Jessica Buzzi</h2>
-        <p class="about-cref-reg">CREF 021289-G/SC</p>
         <p class="about-cred">Especialista em Treinamento Personalizado e Nutrição Esportiva</p>
         <div class="about-bio">
           <p>Meu nome é Jessica Buzzi e a minha paixão pela musculação iniciou quando eu percebi o poder que ela exerce em mim. Treinar faz parte da minha filosofia de vida, minha mente não compreende mais uma vida sem o exercício físico.</p>
@@ -754,8 +683,14 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
   </div>
 </section>
 
+<!-- LIGHTBOX -->
+<div class="lb-overlay" id="lb-overlay" role="dialog" aria-modal="true">
+  <button class="lb-close" id="lb-close" aria-label="Fechar">&#x2715;</button>
+  <img class="lb-img" id="lb-img" src="" alt="Resultado"/>
+</div>
+
 <!-- FOOTER -->
-<footer id="contato">
+<footer>
   <div class="wrap">
     <div class="footer-top">
       <img src="logo-jessica-buzzi.png" alt="Jessica Buzzi" class="footer-logo-img"/>
@@ -790,7 +725,7 @@ window.addEventListener('scroll', () => {
   document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 40);
 }, {passive:true});
 
-/* hero stagger */
+/* hero stagger — set initial state first so fromTo is clean; CSS has no opacity:0 fallback */
 if (typeof gsap !== 'undefined') {
   const heroTargets = ['#h-logo','#h-ey','#h-h1','#h-sub','#h-list','#h-cta'];
   gsap.set(heroTargets, {opacity:0, y:28});
@@ -840,28 +775,18 @@ gsap.fromTo('.plan-card',{opacity:0,y:36,scale:.97},{opacity:1,y:0,scale:1,durat
 
 revealBatch('.finalcta-inner > *');
 
-/* result carousels */
-document.querySelectorAll('.result-carousel').forEach(function(carousel){
-  var track = carousel.querySelector('.result-track');
-  var dots  = carousel.querySelectorAll('.result-dot');
-  var total = carousel.querySelectorAll('.result-slide').length;
-  var cur = 0;
-  function go(n){
-    cur = (n + total) % total;
-    track.style.transform = 'translateX(-' + (cur * 100) + '%)';
-    dots.forEach(function(d,i){ d.classList.toggle('active', i === cur); });
-  }
-  carousel.querySelector('.prev').addEventListener('click', function(){ go(cur - 1); });
-  carousel.querySelector('.next').addEventListener('click', function(){ go(cur + 1); });
-  dots.forEach(function(d){ d.addEventListener('click', function(){ go(+d.dataset.i); }); });
-});
-
 /* carousel */
 (function(){
   const track = document.getElementById('c-track');
   const dots  = document.querySelectorAll('.c-dot');
+  const iframes = track.querySelectorAll('.c-yt');
   let cur = 0, total = 3;
+  function stopVideo(idx){
+    const f = iframes[idx];
+    if(f){ const s = f.src; f.src = ''; f.src = s; }
+  }
   function go(n){
+    stopVideo(cur);
     cur = (n + total) % total;
     track.style.transform = `translateX(-${cur * 100}%)`;
     dots.forEach((d,i) => d.classList.toggle('active', i === cur));
@@ -869,6 +794,18 @@ document.querySelectorAll('.result-carousel').forEach(function(carousel){
   document.getElementById('c-prev').addEventListener('click', () => go(cur - 1));
   document.getElementById('c-next').addEventListener('click', () => go(cur + 1));
   dots.forEach(d => d.addEventListener('click', () => go(+d.dataset.i)));
+})();
+
+/* lightbox */
+(function(){
+  const overlay = document.getElementById('lb-overlay');
+  const img     = document.getElementById('lb-img');
+  function open(src){ img.src = src; overlay.classList.add('active'); document.body.style.overflow='hidden'; }
+  function close(){ overlay.classList.remove('active'); img.src=''; document.body.style.overflow=''; }
+  document.querySelectorAll('.lb-trigger').forEach(el => el.addEventListener('click', () => open(el.src)));
+  document.getElementById('lb-close').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if(e.target === overlay) close(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
 })();
 </script>
 </body>
