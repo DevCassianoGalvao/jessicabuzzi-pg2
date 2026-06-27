@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin · Jessica Buzzi</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#050505;--g1:#0e0e0e;--g2:#141414;--g3:#1a1a1a;--g4:#222;
+  --yellow:#f5c800;--yl:rgba(245,200,0,.12);--yd:rgba(245,200,0,.06);
+  --w:#fff;--w80:rgba(255,255,255,.8);--w60:rgba(255,255,255,.6);
+  --w30:rgba(255,255,255,.3);--w12:rgba(255,255,255,.12);--w06:rgba(255,255,255,.06);
+  --green:#22c55e;--red:#ef4444;--blue:#3b82f6;
+  --fh:'Inter',sans-serif;
+}
+html,body{height:100%;background:var(--black);color:var(--w);font-family:var(--fh);-webkit-font-smoothing:antialiased}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+
+/* ── LOGIN / SETUP ── */
+#s-login,#s-setup{align-items:center;justify-content:center;background:var(--black)}
+.auth-box{width:100%;max-width:420px;padding:48px 40px;background:var(--g1);border:1px solid var(--w12);border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.auth-logo{height:52px;margin-bottom:8px;opacity:.9}
+.auth-box h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.auth-box p{font-size:13px;color:var(--w60);text-align:center;line-height:1.6}
+.field{width:100%;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--w60)}
+.field input,.field textarea{width:100%;background:var(--g3);border:1px solid var(--w12);border-radius:6px;padding:11px 14px;color:var(--w);font-size:14px;font-family:var(--fh);outline:none;transition:border-color .2s}
+.field input:focus,.field textarea:focus{border-color:rgba(245,200,0,.4)}
+.field textarea{resize:vertical;min-height:90px;font-family:monospace;font-size:12px}
+.field-hint{font-size:11px;color:var(--w30);line-height:1.5}
+.btn-primary{width:100%;padding:13px;background:var(--yellow);color:#000;border:none;border-radius:6px;font-weight:700;font-size:14px;letter-spacing:.04em;cursor:pointer;transition:opacity .2s,transform .15s}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.err-msg{font-size:12px;color:var(--red);text-align:center}
+.setup-sep{width:100%;border-top:1px solid var(--w06);margin:4px 0}
+
+/* ── ADMIN PANEL ── */
+#s-admin{flex-direction:column}
+.adm-header{display:flex;align-items:center;gap:16px;padding:0 28px;height:60px;background:var(--g1);border-bottom:1px solid var(--w06);position:sticky;top:0;z-index:100}
+.adm-header-logo{height:38px;opacity:.85}
+.adm-title{font-size:13px;font-weight:600;color:var(--w60);letter-spacing:.04em}
+.adm-title span{color:var(--yellow)}
+.adm-spacer{flex:1}
+.pub-wrap{display:flex;align-items:center;gap:12px}
+#pub-status{font-size:12px;font-weight:500;display:none}
+#pub-status.ok{color:var(--green);display:block}
+#pub-status.err{color:var(--red);display:block}
+#pub-status.loading{color:var(--w60);display:block}
+.btn-pub{padding:10px 24px;background:var(--yellow);color:#000;border:none;border-radius:6px;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;transition:opacity .2s,transform .15s;white-space:nowrap}
+.btn-pub:hover{opacity:.9}
+.btn-pub:disabled{opacity:.35;cursor:not-allowed}
+.btn-logout{padding:8px 16px;background:transparent;color:var(--w30);border:1px solid var(--w12);border-radius:6px;font-size:12px;cursor:pointer;transition:color .2s,border-color .2s}
+.btn-logout:hover{color:var(--w);border-color:var(--w30)}
+
+.adm-body{display:flex;flex:1;min-height:0}
+
+/* ── SIDEBAR ── */
+.adm-nav{width:220px;background:var(--g1);border-right:1px solid var(--w06);padding:24px 12px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.nav-section{font-size:9px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--w30);padding:16px 12px 8px}
+.nav-section:first-child{padding-top:0}
+.nav-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--w60);transition:background .2s,color .2s;user-select:none}
+.nav-link svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.7}
+.nav-link:hover{background:var(--w06);color:var(--w)}
+.nav-link.active{background:var(--yl);color:var(--yellow)}
+.nav-link.active svg{opacity:1}
+
+/* ── CONTENT ── */
+.adm-content{flex:1;overflow-y:auto;padding:32px 36px;display:flex;flex-direction:column;gap:24px}
+.tab-panel{display:none}
+.tab-panel.active{display:flex;flex-direction:column;gap:20px}
+
+/* ── CARDS ── */
+.card{background:var(--g1);border:1px solid var(--w12);border-radius:10px;overflow:hidden}
+.card-hdr{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--w06);cursor:pointer;user-select:none}
+.card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-icon svg{width:18px;height:18px}
+.icon-gtm{background:rgba(66,133,244,.12);color:#4285f4}
+.icon-gtm svg{stroke:#4285f4}
+.icon-pixel{background:rgba(24,119,242,.12)}
+.icon-pixel svg{fill:#1877f2;stroke:none}
+.icon-ga4{background:rgba(234,67,53,.12)}
+.icon-ga4 svg{stroke:#ea4335}
+.icon-gads{background:rgba(52,168,83,.12)}
+.icon-gads svg{stroke:#34a853}
+.icon-custom{background:rgba(245,200,0,.1)}
+.icon-custom svg{stroke:var(--yellow)}
+.card-info{flex:1}
+.card-name{font-size:14px;font-weight:600;color:var(--w)}
+.card-desc{font-size:12px;color:var(--w60);margin-top:2px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--g3);border:1px solid var(--w12);border-radius:11px;cursor:pointer;transition:background .25s,border-color .25s}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--w30);border-radius:50%;transition:transform .25s,background .25s}
+.toggle input:checked~.toggle-track{background:rgba(245,200,0,.18);border-color:rgba(245,200,0,.4)}
+.toggle input:checked~.toggle-track .toggle-thumb{transform:translateX(18px);background:var(--yellow)}
+.card-body{padding:0 22px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.card-body.open{max-height:600px;padding:20px 22px}
+.fields-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.fields-row{grid-template-columns:1fr}}
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:4px;margin-top:8px}
+.badge-active{background:rgba(34,197,94,.12);color:var(--green)}
+.badge-inactive{background:var(--w06);color:var(--w30)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ── CONFIG ── */
+.config-section{display:flex;flex-direction:column;gap:14px}
+.config-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.config-sub{font-size:13px;color:var(--w60);line-height:1.6}
+.btn-secondary{padding:10px 20px;background:transparent;color:var(--w);border:1px solid var(--w12);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s}
+.btn-secondary:hover{border-color:var(--w30);background:var(--w06)}
+.btn-danger{padding:10px 20px;background:transparent;color:var(--red);border:1px solid rgba(239,68,68,.25);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s}
+.btn-danger:hover{border-color:var(--red);background:rgba(239,68,68,.08)}
+.inline-ok{font-size:12px;color:var(--green);margin-left:8px;display:none}
+
+/* ── PREVIEW ── */
+.preview-box{background:var(--black);border:1px solid var(--w06);border-radius:6px;padding:14px 16px;font-family:monospace;font-size:11px;color:var(--w60);white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;line-height:1.6}
+.copy-btn{padding:6px 14px;background:var(--g3);border:1px solid var(--w12);border-radius:4px;color:var(--w60);font-size:11px;cursor:pointer;transition:color .2s;margin-top:8px;font-family:var(--fh)}
+.copy-btn:hover{color:var(--yellow)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .adm-nav{display:none}
+  .adm-content{padding:20px 18px}
+  .auth-box{padding:36px 24px}
+  .adm-header{padding:0 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="s-login" class="screen active">
+  <div class="auth-box">
+    <img src="logo-jessica-buzzi.png" class="auth-logo" alt="Jessica Buzzi"/>
+    <h1>Painel Admin</h1>
+    <p>Gestão de Scripts de Rastreamento</p>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="login-pw" placeholder="Digite sua senha" autocomplete="current-password"/>
+    </div>
+    <p id="login-err" class="err-msg" style="display:none">Senha incorreta. Tente novamente.</p>
+    <button class="btn-primary" id="login-btn">Entrar</button>
+  </div>
+</div>
+
+<!-- ══ SETUP (first time) ══ -->
+<div id="s-setup" class="screen">
+  <div class="auth-box">
+    <img src="logo-jessica-buzzi.png" class="auth-logo" alt="Jessica Buzzi"/>
+    <h1>Configuração Inicial</h1>
+    <p>Configure o acesso ao painel admin. Esta etapa ocorre apenas uma vez neste dispositivo.</p>
+    <div class="setup-sep"></div>
+    <div class="field">
+      <label>Token GitHub</label>
+      <input type="password" id="setup-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off"/>
+      <span class="field-hint">Gere em: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens<br>Permissão necessária: <strong>Contents: Read and Write</strong></span>
+    </div>
+    <div class="field">
+      <label>Criar senha de acesso</label>
+      <input type="password" id="setup-pw" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+    </div>
+    <div class="field">
+      <label>Confirmar senha</label>
+      <input type="password" id="setup-pw2" placeholder="Repita a senha" autocomplete="new-password"/>
+    </div>
+    <p id="setup-err" class="err-msg" style="display:none"></p>
+    <button class="btn-primary" id="setup-btn">Salvar e Entrar</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══ -->
+<div id="s-admin" class="screen">
+  <header class="adm-header">
+    <img src="logo-jessica-buzzi.png" class="adm-header-logo" alt="Jessica Buzzi"/>
+    <span class="adm-title">Painel <span>Admin</span></span>
+    <div class="adm-spacer"></div>
+    <div class="pub-wrap">
+      <span id="pub-status"></span>
+      <button class="btn-pub" id="pub-btn">⬆ Publicar</button>
+      <button class="btn-logout" id="logout-btn">Sair</button>
+    </div>
+  </header>
+
+  <div class="adm-body">
+    <!-- SIDEBAR -->
+    <nav class="adm-nav">
+      <div class="nav-section">Rastreamento</div>
+      <div class="nav-link active" data-tab="scripts">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Scripts
+      </div>
+      <div class="nav-section">Sistema</div>
+      <div class="nav-link" data-tab="config">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Configurações
+      </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="adm-content">
+
+      <!-- TAB: SCRIPTS -->
+      <div id="tab-scripts" class="tab-panel active">
+
+        <!-- GTM -->
+        <div class="card" id="card-gtm">
+          <div class="card-hdr" data-card="gtm">
+            <div class="card-icon icon-gtm">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#4285f4" stroke-width="1.7"/><path d="M12 8v8M8 12h8" stroke="#4285f4" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Google Tag Manager</div>
+              <div class="card-desc">Gerencie todos os seus tags em um único lugar</div>
+            </div>
+            <label class="toggle" onclick="event.stopPropagation()">
+              <input type="checkbox" id="tog-gtm" onchange="toggleCard('gtm')"/>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+          <div class="card-body" id="body-gtm">
+            <div class="field">
+              <label>Container ID</label>
+              <input type="text" id="gtm-id" placeholder="GTM-XXXXXXX"/>
+              <span class="field-hint">Encontrado em: GTM → Admin → Container ID</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- META PIXEL -->
+        <div class="card" id="card-pixel">
+          <div class="card-hdr" data-card="pixel">
+            <div class="card-icon icon-pixel">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-4h-2v-2h2v-1.5c0-1.93 1.16-3 2.91-3 .84 0 1.71.15 1.71.15v1.88h-.96c-.95 0-1.24.59-1.24 1.19v1.28h2.11l-.34 2H13.5v4H11z" fill="#1877f2"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Meta Pixel (Facebook)</div>
+              <div class="card-desc">Rastreamento de conversões e audiências personalizadas</div>
+            </div>
+            <label class="toggle" onclick="event.stopPropagation()">
+              <input type="checkbox" id="tog-pixel" onchange="toggleCard('pixel')"/>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+          <div class="card-body" id="body-pixel">
+            <div class="field">
+              <label>Pixel ID</label>
+              <input type="text" id="pixel-id" placeholder="000000000000000"/>
+              <span class="field-hint">Encontrado em: Gerenciador de Anúncios → Eventos → Pixels</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- GA4 -->
+        <div class="card" id="card-ga4">
+          <div class="card-hdr" data-card="ga4">
+            <div class="card-icon icon-ga4">
+              <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Google Analytics 4</div>
+              <div class="card-desc">Análise de tráfego e comportamento dos visitantes</div>
+            </div>
+            <label class="toggle" onclick="event.stopPropagation()">
+              <input type="checkbox" id="tog-ga4" onchange="toggleCard('ga4')"/>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+          <div class="card-body" id="body-ga4">
+            <div class="field">
+              <label>Measurement ID</label>
+              <input type="text" id="ga4-id" placeholder="G-XXXXXXXXXX"/>
+              <span class="field-hint">Encontrado em: GA4 → Admin → Fluxos de dados → ID de medição</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- GOOGLE ADS -->
+        <div class="card" id="card-gads">
+          <div class="card-hdr" data-card="gads">
+            <div class="card-icon icon-gads">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Google Ads — Conversões</div>
+              <div class="card-desc">Tag de acompanhamento de conversões do Google Ads</div>
+            </div>
+            <label class="toggle" onclick="event.stopPropagation()">
+              <input type="checkbox" id="tog-gads" onchange="toggleCard('gads')"/>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+          <div class="card-body" id="body-gads">
+            <div class="fields-row">
+              <div class="field">
+                <label>Conversion ID</label>
+                <input type="text" id="gads-id" placeholder="AW-XXXXXXXXX"/>
+              </div>
+              <div class="field">
+                <label>Conversion Label (opcional)</label>
+                <input type="text" id="gads-label" placeholder="xxxxxxxxxxxx"/>
+              </div>
+            </div>
+            <span class="field-hint" style="margin-top:8px;display:block">Encontrado em: Google Ads → Ferramentas → Conversões → Tag</span>
+          </div>
+        </div>
+
+        <!-- CUSTOM SCRIPTS -->
+        <div class="card" id="card-custom">
+          <div class="card-hdr" data-card="custom">
+            <div class="card-icon icon-custom">
+              <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Scripts Personalizados</div>
+              <div class="card-desc">Qualquer código adicional: Hotjar, TikTok Pixel, etc.</div>
+            </div>
+            <label class="toggle" onclick="event.stopPropagation()">
+              <input type="checkbox" id="tog-custom" onchange="toggleCard('custom')"/>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+          <div class="card-body" id="body-custom">
+            <div class="field">
+              <label>Código para o &lt;head&gt;</label>
+              <textarea id="custom-head" placeholder="<!-- Cole aqui scripts que devem ser carregados no head da página -->&#10;<script>&#10;  // seu código aqui&#10;</script>"></textarea>
+              <span class="field-hint">Scripts de rastreamento, pixels adicionais, fontes, etc.</span>
+            </div>
+            <div class="field" style="margin-top:14px">
+              <label>Código para o &lt;body&gt;</label>
+              <textarea id="custom-body" placeholder="<!-- Cole aqui scripts que devem ser carregados logo após o <body> -->&#10;<noscript>...</noscript>"></textarea>
+              <span class="field-hint">Noscript tags, widgets, chat ao vivo, etc.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="card">
+          <div class="card-hdr" data-card="preview">
+            <div class="card-icon" style="background:var(--w06)">
+              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--w60);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Preview do tracking.js</div>
+              <div class="card-desc">Código que será publicado na página</div>
+            </div>
+          </div>
+          <div class="card-body open" id="body-preview">
+            <div class="preview-box" id="preview-code">// Preencha os campos acima e clique em "Publicar" para gerar o código.</div>
+            <button class="copy-btn" onclick="copyPreview()">Copiar código</button>
+          </div>
+        </div>
+
+      </div><!-- /tab-scripts -->
+
+      <!-- TAB: CONFIG -->
+      <div id="tab-config" class="tab-panel">
+
+        <div class="card">
+          <div class="card-hdr" style="cursor:default">
+            <div class="card-icon" style="background:rgba(59,130,246,.1)">
+              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#3b82f6;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Token GitHub</div>
+              <div class="card-desc">Necessário para publicar o tracking.js automaticamente</div>
+            </div>
+          </div>
+          <div class="card-body open">
+            <div class="field">
+              <label>Personal Access Token</label>
+              <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off"/>
+              <span class="field-hint">
+                Gere em: <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong><br>
+                Repo: <strong>jessicabuzzi-pg2</strong> · Permissão: <strong>Contents: Read and Write</strong>
+              </span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+              <button class="btn-secondary" onclick="saveToken()">Salvar Token</button>
+              <span class="inline-ok" id="token-ok">✓ Salvo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr" style="cursor:default">
+            <div class="card-icon" style="background:rgba(245,200,0,.1)">
+              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--yellow);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Alterar Senha</div>
+              <div class="card-desc">Senha de acesso ao painel admin</div>
+            </div>
+          </div>
+          <div class="card-body open">
+            <div class="fields-row">
+              <div class="field">
+                <label>Senha atual</label>
+                <input type="password" id="cfg-pw-old" placeholder="••••••••"/>
+              </div>
+              <div class="field">
+                <label>Nova senha</label>
+                <input type="password" id="cfg-pw-new" placeholder="Mínimo 6 caracteres"/>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+              <button class="btn-secondary" onclick="changePassword()">Alterar Senha</button>
+              <span class="inline-ok" id="pw-ok">✓ Senha alterada</span>
+              <span id="pw-err2" class="err-msg" style="display:none"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr" style="cursor:default">
+            <div class="card-icon" style="background:rgba(239,68,68,.1)">
+              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--red);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+            </div>
+            <div class="card-info">
+              <div class="card-name">Resetar Acesso</div>
+              <div class="card-desc">Remove senha e token. Você precisará reconfigurá-los.</div>
+            </div>
+          </div>
+          <div class="card-body open">
+            <button class="btn-danger" onclick="resetAccess()">Resetar Configurações</button>
+          </div>
+        </div>
+
+      </div><!-- /tab-config -->
+
+    </div><!-- /adm-content -->
+  </div><!-- /adm-body -->
+</div><!-- /s-admin -->
+
+<script>
+'use strict';
+
+const REPO  = 'DevCassianoGalvao/jessicabuzzi-pg2';
+const FILE  = 'tracking.js';
+const LS    = { hash:'jb_pw_hash', token:'jb_gh_token', config:'jb_track_cfg' };
+
+// ── UTILS ──
+async function sha256(str) {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('pub-status');
+  el.textContent = msg;
+  el.className = type;
+}
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = localStorage.getItem(LS.hash);
+  if (!hash) {
+    show('s-setup');
+  } else {
+    show('s-login');
+  }
+  setupEvents();
+});
+
+// ── SETUP ──
+async function doSetup() {
+  const token = document.getElementById('setup-token').value.trim();
+  const pw    = document.getElementById('setup-pw').value;
+  const pw2   = document.getElementById('setup-pw2').value;
+  const err   = document.getElementById('setup-err');
+
+  err.style.display = 'none';
+  if (!token)          { err.textContent = 'Informe o token do GitHub.'; err.style.display='block'; return; }
+  if (pw.length < 6)  { err.textContent = 'A senha deve ter pelo menos 6 caracteres.'; err.style.display='block'; return; }
+  if (pw !== pw2)     { err.textContent = 'As senhas não coincidem.'; err.style.display='block'; return; }
+
+  const hash = await sha256(pw);
+  localStorage.setItem(LS.hash, hash);
+  localStorage.setItem(LS.token, token);
+  enterAdmin();
+}
+
+// ── LOGIN ──
+async function doLogin() {
+  const pw  = document.getElementById('login-pw').value;
+  const err = document.getElementById('login-err');
+  const hash = await sha256(pw);
+  if (hash === localStorage.getItem(LS.hash)) {
+    err.style.display = 'none';
+    enterAdmin();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('login-pw').value = '';
+  }
+}
+
+// ── ENTER ADMIN ──
+function enterAdmin() {
+  show('s-admin');
+  loadConfig();
+  updatePreview();
+  const token = localStorage.getItem(LS.token);
+  if (token) document.getElementById('cfg-token').value = token;
+}
+
+// ── LOGOUT ──
+function doLogout() {
+  show('s-login');
+  document.getElementById('login-pw').value = '';
+}
+
+// ── CONFIG PERSISTENCE ──
+function loadConfig() {
+  const cfg = JSON.parse(localStorage.getItem(LS.config) || '{}');
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  const tog = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) { el.checked = !!val; toggleCard(id.replace('tog-',''), true); }
+  };
+  set('gtm-id',     cfg.gtmId);
+  set('pixel-id',   cfg.pixelId);
+  set('ga4-id',     cfg.ga4Id);
+  set('gads-id',    cfg.gadsId);
+  set('gads-label', cfg.gadsLabel);
+  set('custom-head',cfg.customHead);
+  set('custom-body',cfg.customBody);
+  tog('tog-gtm',    cfg.gtmOn);
+  tog('tog-pixel',  cfg.pixelOn);
+  tog('tog-ga4',    cfg.ga4On);
+  tog('tog-gads',   cfg.gadsOn);
+  tog('tog-custom', cfg.customOn);
+}
+
+function saveConfig() {
+  const g = id => (document.getElementById(id)||{}).value || '';
+  const t = id => (document.getElementById(id)||{}).checked || false;
+  const cfg = {
+    gtmId:      g('gtm-id'),    gtmOn:    t('tog-gtm'),
+    pixelId:    g('pixel-id'),  pixelOn:  t('tog-pixel'),
+    ga4Id:      g('ga4-id'),    ga4On:    t('tog-ga4'),
+    gadsId:     g('gads-id'),   gadsOn:   t('tog-gads'),
+    gadsLabel:  g('gads-label'),
+    customHead: g('custom-head'),customOn: t('tog-custom'),
+    customBody: g('custom-body')
+  };
+  localStorage.setItem(LS.config, JSON.stringify(cfg));
+  return cfg;
+}
+
+// ── TOGGLE CARDS ──
+function toggleCard(name, silent) {
+  const body  = document.getElementById('body-'+name);
+  const tog   = document.getElementById('tog-'+name);
+  if (!body) return;
+  if (tog && tog.checked) {
+    body.classList.add('open');
+  } else {
+    body.classList.remove('open');
+  }
+  if (!silent) { updatePreview(); }
+}
+
+// ── CARD HEADER CLICK (expand/collapse) ──
+document.addEventListener('click', e => {
+  const hdr = e.target.closest('.card-hdr[data-card]');
+  if (!hdr) return;
+  const name = hdr.dataset.card;
+  if (name === 'preview') {
+    const body = document.getElementById('body-preview');
+    body && body.classList.toggle('open');
+    return;
+  }
+  const tog = document.getElementById('tog-'+name);
+  if (tog) { tog.checked = !tog.checked; toggleCard(name); }
+});
+
+// ── GENERATE TRACKING.JS ──
+function generateTrackingJs(cfg) {
+  const lines = [
+    '/* Jessica Buzzi — Scripts de Rastreamento */',
+    '/* Gerenciado via Painel Admin · Não editar manualmente */',
+    `/* Publicado: ${new Date().toLocaleString('pt-BR')} */`,
+    '',
+    '(function(){'
+  ];
+
+  if (cfg.gtmOn && cfg.gtmId) {
+    lines.push('');
+    lines.push('  /* Google Tag Manager */');
+    lines.push(`  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${cfg.gtmId}');`);
+  }
+
+  if (cfg.pixelOn && cfg.pixelId) {
+    lines.push('');
+    lines.push('  /* Meta Pixel */');
+    lines.push(`  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${cfg.pixelId}');fbq('track','PageView');`);
+    lines.push(`  var _pn=document.createElement('noscript');_pn.innerHTML='<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${cfg.pixelId}&ev=PageView&noscript=1"/>';document.head.appendChild(_pn);`);
+  }
+
+  if (cfg.ga4On && cfg.ga4Id) {
+    lines.push('');
+    lines.push('  /* Google Analytics 4 */');
+    lines.push(`  var _ga=document.createElement('script');_ga.async=true;_ga.src='https://www.googletagmanager.com/gtag/js?id=${cfg.ga4Id}';document.head.appendChild(_ga);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${cfg.ga4Id}');`);
+  }
+
+  if (cfg.gadsOn && cfg.gadsId) {
+    lines.push('');
+    lines.push('  /* Google Ads */');
+    lines.push(`  var _gads=document.createElement('script');_gads.async=true;_gads.src='https://www.googletagmanager.com/gtag/js?id=${cfg.gadsId}';document.head.appendChild(_gads);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${cfg.gadsId}'${cfg.gadsLabel ? `,{'conversion_label':'${cfg.gadsLabel}'}`:''});`);
+  }
+
+  if (cfg.customOn && cfg.customHead) {
+    lines.push('');
+    lines.push('  /* Scripts personalizados (head) */');
+    lines.push('  (function(){');
+    lines.push(`    var _tmp=document.createElement('div');_tmp.innerHTML=${JSON.stringify(cfg.customHead)};`);
+    lines.push(`    _tmp.querySelectorAll('script').forEach(function(s){var n=document.createElement('script');if(s.src){n.src=s.src;n.async=true;}else{n.textContent=s.textContent;}document.head.appendChild(n);});`);
+    lines.push(`    Array.from(_tmp.children).forEach(function(el){if(el.tagName!=='SCRIPT')document.head.appendChild(el);});`);
+    lines.push('  })();');
+  }
+
+  const bodyParts = [];
+  if (cfg.gtmOn && cfg.gtmId) {
+    bodyParts.push(`    /* GTM noscript */var _gn=document.createElement('noscript');_gn.innerHTML='<iframe src="https://www.googletagmanager.com/ns.html?id=${cfg.gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>';document.body.insertBefore(_gn,document.body.firstChild);`);
+  }
+  if (cfg.customOn && cfg.customBody) {
+    bodyParts.push('    /* Scripts personalizados (body) */');
+    bodyParts.push(`    var _tmp2=document.createElement('div');_tmp2.innerHTML=${JSON.stringify(cfg.customBody)};`);
+    bodyParts.push(`    _tmp2.querySelectorAll('script').forEach(function(s){var n=document.createElement('script');if(s.src){n.src=s.src;n.async=true;}else{n.textContent=s.textContent;}document.body.insertBefore(n,document.body.firstChild);});`);
+    bodyParts.push(`    Array.from(_tmp2.children).forEach(function(el){if(el.tagName!=='SCRIPT')document.body.insertBefore(el,document.body.firstChild);});`);
+  }
+
+  if (bodyParts.length > 0) {
+    lines.push('');
+    lines.push("  document.addEventListener('DOMContentLoaded',function(){");
+    lines.push(...bodyParts);
+    lines.push('  });');
+  }
+
+  lines.push('');
+  lines.push('})();');
+
+  const content = lines.join('\n');
+  const isEmpty = !((cfg.gtmOn&&cfg.gtmId)||(cfg.pixelOn&&cfg.pixelId)||(cfg.ga4On&&cfg.ga4Id)||(cfg.gadsOn&&cfg.gadsId)||(cfg.customOn&&(cfg.customHead||cfg.customBody)));
+  return isEmpty ? '/* Jessica Buzzi — Nenhum script configurado */' : content;
+}
+
+// ── PREVIEW ──
+function updatePreview() {
+  const cfg = saveConfig();
+  const code = generateTrackingJs(cfg);
+  const box = document.getElementById('preview-code');
+  if (box) box.textContent = code;
+}
+
+function copyPreview() {
+  const code = document.getElementById('preview-code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar código', 2000);
+  });
+}
+
+// ── GITHUB API ──
+async function getFileSha(token) {
+  const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+  });
+  if (r.status === 404) return null;
+  const d = await r.json();
+  return d.sha || null;
+}
+
+async function publishToGithub(token, content) {
+  const sha = await getFileSha(token);
+  const body = {
+    message: `Update tracking scripts — ${new Date().toLocaleString('pt-BR')}`,
+    content: btoa(unescape(encodeURIComponent(content))),
+    committer: { name: 'Admin Panel', email: 'admin@jessicabuzzi.com.br' }
+  };
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  return r.ok ? r.json() : Promise.reject(await r.json());
+}
+
+// ── PUBLISH ──
+async function doPublish() {
+  const token = localStorage.getItem(LS.token);
+  if (!token) {
+    setStatus('⚠ Configure o token GitHub em Configurações.', 'err');
+    switchTab('config');
+    return;
+  }
+  const cfg  = saveConfig();
+  const code = generateTrackingJs(cfg);
+  const btn  = document.getElementById('pub-btn');
+
+  btn.disabled = true;
+  setStatus('Publicando…', 'loading');
+
+  try {
+    await publishToGithub(token, code);
+    setStatus('✓ Publicado! Vercel atualizando em ~30s', 'ok');
+    updatePreview();
+  } catch (err) {
+    console.error(err);
+    const msg = err.message || 'Verifique o token e tente novamente.';
+    setStatus('✗ Erro: ' + msg, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const panel = document.getElementById('tab-'+name);
+  if (panel) panel.classList.add('active');
+  const link = document.querySelector(`.nav-link[data-tab="${name}"]`);
+  if (link) link.classList.add('active');
+}
+
+// ── CONFIG ACTIONS ──
+function saveToken() {
+  const val = document.getElementById('cfg-token').value.trim();
+  if (!val) return;
+  localStorage.setItem(LS.token, val);
+  const ok = document.getElementById('token-ok');
+  ok.style.display = 'inline';
+  setTimeout(() => ok.style.display='none', 2500);
+}
+
+async function changePassword() {
+  const old = document.getElementById('cfg-pw-old').value;
+  const nw  = document.getElementById('cfg-pw-new').value;
+  const ok  = document.getElementById('pw-ok');
+  const err = document.getElementById('pw-err2');
+  ok.style.display='none'; err.style.display='none';
+
+  if (nw.length < 6) { err.textContent='Mínimo 6 caracteres.'; err.style.display='block'; return; }
+  const oldHash = await sha256(old);
+  if (oldHash !== localStorage.getItem(LS.hash)) { err.textContent='Senha atual incorreta.'; err.style.display='block'; return; }
+  localStorage.setItem(LS.hash, await sha256(nw));
+  document.getElementById('cfg-pw-old').value='';
+  document.getElementById('cfg-pw-new').value='';
+  ok.style.display='inline';
+  setTimeout(()=>ok.style.display='none',2500);
+}
+
+function resetAccess() {
+  if (!confirm('Tem certeza? Você precisará reconfigurar o token e a senha.')) return;
+  [LS.hash, LS.token, LS.config].forEach(k => localStorage.removeItem(k));
+  show('s-setup');
+}
+
+// ── EVENTS ──
+function setupEvents() {
+  // login
+  document.getElementById('login-btn').addEventListener('click', doLogin);
+  document.getElementById('login-pw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  // setup
+  document.getElementById('setup-btn').addEventListener('click', doSetup);
+  // publish
+  document.getElementById('pub-btn').addEventListener('click', doPublish);
+  // logout
+  document.getElementById('logout-btn').addEventListener('click', doLogout);
+  // tabs
+  document.querySelectorAll('.nav-link[data-tab]').forEach(link => {
+    link.addEventListener('click', () => switchTab(link.dataset.tab));
+  });
+  // live preview update
+  ['gtm-id','pixel-id','ga4-id','gads-id','gads-label','custom-head','custom-body'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updatePreview);
+  });
+}
+</script>
+</body>
+</html>
