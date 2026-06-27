@@ -154,11 +154,7 @@ html,body{height:100%;background:var(--black);color:var(--w);font-family:var(--f
     <h1>Configuração Inicial</h1>
     <p>Configure o acesso ao painel admin. Esta etapa ocorre apenas uma vez neste dispositivo.</p>
     <div class="setup-sep"></div>
-    <div class="field">
-      <label>Token GitHub</label>
-      <input type="password" id="setup-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off"/>
-      <span class="field-hint">Gere em: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens<br>Permissão necessária: <strong>Contents: Read and Write</strong></span>
-    </div>
+    <input type="hidden" id="setup-token" value=""/>
     <div class="field">
       <label>Criar senha de acesso</label>
       <input type="password" id="setup-pw" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
@@ -359,31 +355,6 @@ html,body{height:100%;background:var(--black);color:var(--w);font-family:var(--f
       <!-- TAB: CONFIG -->
       <div id="tab-config" class="tab-panel">
 
-        <div class="card">
-          <div class="card-hdr" style="cursor:default">
-            <div class="card-icon" style="background:rgba(59,130,246,.1)">
-              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#3b82f6;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-            </div>
-            <div class="card-info">
-              <div class="card-name">Token GitHub</div>
-              <div class="card-desc">Necessário para publicar o tracking.js automaticamente</div>
-            </div>
-          </div>
-          <div class="card-body open">
-            <div class="field">
-              <label>Personal Access Token</label>
-              <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off"/>
-              <span class="field-hint">
-                Gere em: <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong><br>
-                Repo: <strong>jessicabuzzi-pg2</strong> · Permissão: <strong>Contents: Read and Write</strong>
-              </span>
-            </div>
-            <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
-              <button class="btn-secondary" onclick="saveToken()">Salvar Token</button>
-              <span class="inline-ok" id="token-ok">✓ Salvo</span>
-            </div>
-          </div>
-        </div>
 
         <div class="card">
           <div class="card-hdr" style="cursor:default">
@@ -703,8 +674,7 @@ async function publishToGithub(token, content) {
 async function doPublish() {
   const token = localStorage.getItem(LS.token);
   if (!token) {
-    setStatus('⚠ Configure o token GitHub em Configurações.', 'err');
-    switchTab('config');
+    setStatus('⚠ Publicação indisponível. Contate o desenvolvedor.', 'err');
     return;
   }
   const cfg  = saveConfig();
@@ -765,7 +735,7 @@ async function changePassword() {
 }
 
 function resetAccess() {
-  if (!confirm('Tem certeza? O token será removido e a senha voltará ao padrão.')) return;
+  if (!confirm('Tem certeza? A senha voltará ao padrão.')) return;
   [LS.hash, LS.token, LS.config].forEach(k => localStorage.removeItem(k));
   show('s-login');
 }
