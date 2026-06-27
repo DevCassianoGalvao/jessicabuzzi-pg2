@@ -20,6 +20,7 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
+          protocol: ftps
           server-dir: /public_html/
           local-dir: ./
           exclude: |
