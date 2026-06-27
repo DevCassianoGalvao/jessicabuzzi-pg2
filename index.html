@@ -154,11 +154,18 @@ h3{font-size:clamp(17px,1.6vw,22px);font-weight:600;line-height:1.2}
 @media(max-width:900px){.ba-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:540px){.ba-grid{grid-template-columns:1fr}}
 .ba-card{background:var(--g2);border:1px solid var(--w12);border-radius:6px;overflow:hidden}
-.ba-imgs{display:grid;grid-template-columns:1fr 1fr 1fr}
-.ba-img{aspect-ratio:2/3;background:var(--g3);overflow:hidden;cursor:pointer;position:relative}
-.ba-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s cubic-bezier(.16,1,.3,1)}
-.ba-img:hover img{transform:scale(1.06)}
-.ba-img+.ba-img{border-left:1px solid var(--w06)}
+.mc{position:relative;user-select:none}
+.mc-wrap{overflow:hidden}
+.mc-track{display:flex;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.mc-slide{flex:0 0 100%}
+.mc-slide img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;cursor:zoom-in}
+.mc-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:34px;height:34px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;font-size:18px;line-height:1;font-family:system-ui}
+.mc-btn:hover{background:rgba(245,200,0,.8);color:#000}
+.mc-prev{left:8px}
+.mc-next{right:8px}
+.mc-dots{display:flex;gap:5px;justify-content:center;padding:9px 0;background:var(--g2)}
+.mc-dot{width:5px;height:5px;border-radius:50%;background:var(--w30);cursor:pointer;transition:background .25s,transform .25s}
+.mc-dot.active{background:var(--yellow);transform:scale(1.5)}
 .results-cta{text-align:center}
 /* LIGHTBOX */
 .lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -491,25 +498,45 @@ footer{background:var(--g1);padding:44px 0 30px;border-top:1px solid var(--w06)}
       <p>Transformações acontecem quando existe estratégia, acompanhamento e consistência. Os resultados refletem o comprometimento dos alunos aliado a um planejamento individualizado e monitoramento constante.</p>
     </div>
     <div class="ba-grid">
-      <div class="ba-card"><div class="ba-imgs">
-        <div class="ba-img"><img src="uploads/resultado-a-1.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-a-2.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-a-3.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
+      <div class="ba-card"><div class="mc" data-total="3">
+        <div class="mc-wrap"><div class="mc-track">
+          <div class="mc-slide"><img src="uploads/resultado-a-1.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-a-2.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-a-3.png" alt="Resultado A" class="lb-trigger" loading="lazy"/></div>
+        </div></div>
+        <button class="mc-btn mc-prev" aria-label="Anterior">&#8249;</button>
+        <button class="mc-btn mc-next" aria-label="Próximo">&#8250;</button>
+        <div class="mc-dots"><span class="mc-dot active"></span><span class="mc-dot"></span><span class="mc-dot"></span></div>
       </div></div>
-      <div class="ba-card"><div class="ba-imgs">
-        <div class="ba-img"><img src="uploads/resultado-b-1.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-b-2.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-b-3.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
+      <div class="ba-card"><div class="mc" data-total="3">
+        <div class="mc-wrap"><div class="mc-track">
+          <div class="mc-slide"><img src="uploads/resultado-b-1.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-b-2.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-b-3.png" alt="Resultado B" class="lb-trigger" loading="lazy"/></div>
+        </div></div>
+        <button class="mc-btn mc-prev" aria-label="Anterior">&#8249;</button>
+        <button class="mc-btn mc-next" aria-label="Próximo">&#8250;</button>
+        <div class="mc-dots"><span class="mc-dot active"></span><span class="mc-dot"></span><span class="mc-dot"></span></div>
       </div></div>
-      <div class="ba-card"><div class="ba-imgs">
-        <div class="ba-img"><img src="uploads/resultado-c-1.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-c-2.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-c-3.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
+      <div class="ba-card"><div class="mc" data-total="3">
+        <div class="mc-wrap"><div class="mc-track">
+          <div class="mc-slide"><img src="uploads/resultado-c-1.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-c-2.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-c-3.png" alt="Resultado C" class="lb-trigger" loading="lazy"/></div>
+        </div></div>
+        <button class="mc-btn mc-prev" aria-label="Anterior">&#8249;</button>
+        <button class="mc-btn mc-next" aria-label="Próximo">&#8250;</button>
+        <div class="mc-dots"><span class="mc-dot active"></span><span class="mc-dot"></span><span class="mc-dot"></span></div>
       </div></div>
-      <div class="ba-card"><div class="ba-imgs">
-        <div class="ba-img"><img src="uploads/resultado-d-1.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-d-2.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
-        <div class="ba-img"><img src="uploads/resultado-d-3.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
+      <div class="ba-card"><div class="mc" data-total="3">
+        <div class="mc-wrap"><div class="mc-track">
+          <div class="mc-slide"><img src="uploads/resultado-d-1.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-d-2.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
+          <div class="mc-slide"><img src="uploads/resultado-d-3.png" alt="Resultado D" class="lb-trigger" loading="lazy"/></div>
+        </div></div>
+        <button class="mc-btn mc-prev" aria-label="Anterior">&#8249;</button>
+        <button class="mc-btn mc-next" aria-label="Próximo">&#8250;</button>
+        <div class="mc-dots"><span class="mc-dot active"></span><span class="mc-dot"></span><span class="mc-dot"></span></div>
       </div></div>
     </div>
     <div class="results-cta">
@@ -795,6 +822,22 @@ revealBatch('.finalcta-inner > *');
   document.getElementById('c-next').addEventListener('click', () => go(cur + 1));
   dots.forEach(d => d.addEventListener('click', () => go(+d.dataset.i)));
 })();
+
+/* mini carousels (result cards) */
+document.querySelectorAll('.mc').forEach(car => {
+  const track = car.querySelector('.mc-track');
+  const dots  = car.querySelectorAll('.mc-dot');
+  const total = +car.dataset.total;
+  let cur = 0;
+  function go(n){
+    cur = (n + total) % total;
+    track.style.transform = `translateX(-${cur * 100}%)`;
+    dots.forEach((d,i) => d.classList.toggle('active', i === cur));
+  }
+  car.querySelector('.mc-prev').addEventListener('click', e => { e.stopPropagation(); go(cur - 1); });
+  car.querySelector('.mc-next').addEventListener('click', e => { e.stopPropagation(); go(cur + 1); });
+  dots.forEach((d,i) => d.addEventListener('click', () => go(i)));
+});
 
 /* lightbox */
 (function(){
